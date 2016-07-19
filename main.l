@@ -27,20 +27,27 @@
     (getChar)
     (expected c)))
 
-(de pName (n)
-  (car (str (pack
-    (make 
-      (while (letter? (peek))
-       (link (getChar))))))))
-
-(de pNum (n)
+(de pNum ()
   (car (str (pack
     (make 
       (while (number? (peek))
        (link (getChar))))))))
 
+(de pIdent ()  
+  (setq astIdent (car (str (pack
+    (make 
+      (while (letter? (peek))
+       (link (getChar))))))))
+  (if (= (peek) "(")
+    (prog
+      (getChar)
+      (getChar) 
+      (list astIdent))
+    astIdent))
+
 (de main ()
   (pTerm)
+  (println '(de pi () 3.14))
   (println (list 'println ast))
   (println '(bye))
   (bye))
@@ -54,7 +61,7 @@
           (pTerm))
         (match? ")"))) 
     ((number? (peek)) (pNum))
-    ((letter? (peek)) (pName))
+    ((letter? (peek)) (pIdent))
     (T (expected "term"))))
 
 (de pTerm ()
