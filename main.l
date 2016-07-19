@@ -1,6 +1,11 @@
+(setq inputChar 0)
+(de getChar ()
+  (setq inputChar (+ inputChar 1))
+  (char))
+
 (de expected (s)
  (println)
- (prinl "Error: " s " expected")
+ (prinl "Error at " inputChar ": " s " expected")
  (bye))
 
 (de letter? (c)
@@ -19,14 +24,20 @@
 
 (de match? (c)
   (if (= (peek) c)
-    (char)
+    (getChar)
     (expected c)))
 
 (de pName (n)
-  (car (str (char))))
+  (car (str (pack
+    (make 
+      (while (letter? (peek))
+       (link (getChar))))))))
 
 (de pNum (n)
-  (car (str (char))))
+  (car (str (pack
+    (make 
+      (while (number? (peek))
+       (link (getChar))))))))
 
 (de main ()
   (pTerm)
@@ -35,7 +46,13 @@
   (bye))
 
 (de pOperand ()
-  (cond 
+  (cond
+    ((= (peek) "(") 
+      (prog2
+        (getChar) 
+        (use (ast astFactor) 
+          (pTerm))
+        (match? ")"))) 
     ((number? (peek)) (pNum))
     ((letter? (peek)) (pName))
     (T (expected "term"))))
@@ -44,9 +61,8 @@
   (if (addop? (peek))
     (setq ast 0)
     (setq ast (pFactor)))
-
   (while (addop? (peek))
-    (case (peek)
+    (case (getChar)
       ("+" (setq ast (list '+ ast (pFactor))))
       ("-" (setq ast (list '- ast (pFactor))))
       (T (expected "addop"))
@@ -54,7 +70,7 @@
 )))
 
 (de pFactor ()
-  (setq astFactor (pOp))
+  (setq astFactor (pOperand))
   (while (mulop? (peek))
     (case (peek)
       ("*" (setq astFactor (list '* astFactor (pOp))))
@@ -66,5 +82,5 @@
 )
 
 (de pOp ()
-  (char)
+  (getChar)
   (pOperand))
