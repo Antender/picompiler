@@ -33,6 +33,12 @@
       (while (number? (peek))
        (link (getChar))))))))
 
+(de pName ()
+  (car (str (pack
+    (make 
+      (while (letter? (peek))
+       (link (getChar))))))))
+
 (de pIdent ()  
   (setq astIdent (car (str (pack
     (make 
@@ -40,15 +46,16 @@
        (link (getChar))))))))
   (if (= (peek) "(")
     (prog
-      (getChar)
-      (getChar) 
+      (match? "(")
+      (match? ")") 
       (list astIdent))
     astIdent))
 
 (de main ()
-  (pTerm)
-  (println '(de pi () 3.14))
-  (println (list 'println ast))
+  (setq ast (pAssignment))
+  (prinl "(de pi () 3.14)")
+  (println ast)
+  (println '(println output))
   (println '(bye))
   (bye))
 
@@ -57,7 +64,7 @@
     ((= (peek) "(") 
       (prog2
         (getChar) 
-        (use (ast astFactor) 
+        (use (astTerm astFactor) 
           (pTerm))
         (match? ")"))) 
     ((number? (peek)) (pNum))
@@ -66,14 +73,14 @@
 
 (de pTerm ()
   (if (addop? (peek))
-    (setq ast 0)
-    (setq ast (pFactor)))
+    (setq astTerm 0)
+    (setq astTerm (pFactor)))
   (while (addop? (peek))
     (case (getChar)
-      ("+" (setq ast (list '+ ast (pFactor))))
-      ("-" (setq ast (list '- ast (pFactor))))
+      ("+" (setq astTerm (list '+ astTerm (pFactor))))
+      ("-" (setq astTerm (list '- astTerm (pFactor))))
       (T (expected "addop"))
-  ast
+  astTerm
 )))
 
 (de pFactor ()
@@ -91,3 +98,10 @@
 (de pOp ()
   (getChar)
   (pOperand))
+
+(de pAssignment ()
+  (setq astAssignment (pName))
+  (match? "=")
+  (setq astAssignment (list 'setq astAssignment (pTerm)))
+  (match? "\n")
+  astAssignment)
