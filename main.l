@@ -11,6 +11,11 @@
  (prinl "Error at " inputChar ": " s " expected")
  (bye))
 
+(de reduceConst (astReduceConst)
+  (if (and (lst? astReduceConst) (num? (cadr astReduceConst)) (num? (caddr astReduceConst)))
+    (apply (car astReduceConst) (cdr astReduceConst))
+    astReduceConst))
+
 (de whitespace? (c)
   (or (= c " ") (= c "\t")))
 
@@ -92,9 +97,9 @@
     (case (getChar)
       ("+" (setq astTerm (list '+ astTerm (pFactor))))
       ("-" (setq astTerm (list '- astTerm (pFactor))))
-      (T (expected "addop"))
-  astTerm
-)))
+      (T (expected "addop")))
+    (setq astTerm (reduceConst astTerm)))
+  astTerm)
 
 (de pFactor ()
   (setq astFactor (pOperand))
@@ -104,6 +109,7 @@
       ("/" (setq astFactor (list '/ astFactor (pOp))))
       (T (expected "mulop"))
     )
+    (setq astFactor (reduceConst astFactor))
   )
   astFactor
 )
