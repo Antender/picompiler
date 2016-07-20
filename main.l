@@ -3,10 +3,16 @@
   (setq inputChar (+ inputChar 1))
   (char))
 
+(de skipws ()
+  (while (whitespace? (peek))
+    (getChar)))
+
 (de expected (s)
- (println)
  (prinl "Error at " inputChar ": " s " expected")
  (bye))
+
+(de whitespace? (c)
+  (or (= c " ") (= c "\t")))
 
 (de letter? (c)
   (or 
@@ -25,25 +31,31 @@
 (de match? (c)
   (if (= (peek) c)
     (getChar)
-    (expected c)))
+    (expected c))
+  (skipws))
 
 (de pNum ()
-  (car (str (pack
-    (make 
-      (while (number? (peek))
-       (link (getChar))))))))
+  (prog1
+    (car (str (pack
+      (make 
+        (while (number? (peek))
+          (link (getChar)))))))
+    (skipws)))
 
 (de pName ()
-  (car (str (pack
-    (make 
-      (while (letter? (peek))
-       (link (getChar))))))))
+  (prog1
+    (car (str (pack
+      (make 
+        (while (letter? (peek))
+          (link (getChar)))))))
+    (skipws)))
 
 (de pIdent ()  
   (setq astIdent (car (str (pack
     (make 
       (while (letter? (peek))
        (link (getChar))))))))
+  (skipws)
   (if (= (peek) "(")
     (prog
       (match? "(")
@@ -60,6 +72,7 @@
   (bye))
 
 (de pOperand ()
+  (skipws)
   (cond
     ((= (peek) "(") 
       (prog2
@@ -97,6 +110,7 @@
 
 (de pOp ()
   (getChar)
+  (skipws)
   (pOperand))
 
 (de pAssignment ()
