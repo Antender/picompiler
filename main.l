@@ -69,10 +69,8 @@
     astIdent))
 
 (de main ()
-  (setq ast (pAssignment))
   (prinl "(de pi () 3.14)")
-  (println ast)
-  (println '(println output))
+  (println (pBlock))
   (println '(bye))
   (bye))
 
@@ -119,9 +117,26 @@
   (skipws)
   (pOperand))
 
-(de pAssignment ()
-  (setq astAssignment (pName))
-  (match? "=")
-  (setq astAssignment (list 'setq astAssignment (pTerm)))
-  (match? "\n")
-  astAssignment)
+(de pExpression ()
+  (setq astExpression (pIdent))
+  (if (lst? astExpression)
+    (prog1
+      astExpression
+      (skipws)
+      (match? "\n"))
+    (match? "=")
+      (setq astExpression (list 'setq astExpression (pTerm)))
+      (skipws)
+      (match? "\n")
+      astExpression))
+
+(de pBlock ()
+  (setq astBlock (make
+    (while (<> (peek) "e")
+      (link (pExpression))
+    )
+  ))
+  (if (= astBlock NIL)
+    NIL
+    (cons 'prog astBlock))
+)
