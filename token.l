@@ -1,15 +1,11 @@
 (de pNum ()
-  (prog1
-    (car (str (pack
-      (make
-        (while (number? (peek))
-          (link (getChar)))))))
-    (skipws)))
+  (car (str (pack
+    (make
+      (while (number? (peek))
+        (link (getChar))))))))
 
 (de pName ()
-  (prog1
-    (car (str (pack
-      (make
-        (while (letter? (peek))
-          (link (getChar)))))))
-    (skipws)))
+  (car (str (pack
+    (make
+      (while (letter? (peek))
+        (link (getChar)))))))))
