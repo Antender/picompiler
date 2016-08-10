@@ -20,3 +20,8 @@
 
 (de mulop? (c)
   (member c '("*" "/")))
+
+(de alpha? (c)
+  (or
+	  (letter? c)
+		(digit? c)))

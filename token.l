@@ -1,4 +1,4 @@
-(de pNum ()
+(de pNumber ()
   (while (= "0" (peek))
 	  (getChar))
 	(if (= "x" (peek))
@@ -26,7 +26,7 @@
 (de pIdent ()
   (car (str (pack
     (make
-      (while (letter? (peek))
+      (while (alpha? (peek))
         (link (getChar))))))))
 
 (de pString ()
@@ -37,3 +37,9 @@
 		  	(while (<> "\"" (peek))
 			  	(link (getChar)))))
 		(getChar)))
+
+(de pToken ()
+  (cond 
+	  ((digit? (peek)) (pNumber))
+		((letter? (peek)) (pIdent))
+		((= "\"" (peek)) (pString))))
