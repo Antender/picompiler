@@ -1,0 +1,32 @@
+(zero inputChar)
+(zero inputLine)
+(de getChar ()
+  (inc 'inputChar)
+	(let c (char)
+		(if (and (== c "/") (== peek "/"))
+			(prog
+				(while (<> (peek) "\n")
+				  (char))
+				(char)
+				(inc 'inputLine)
+				(zero inputChar)
+				(char))
+			(if (<> c "\n")
+				c
+				(zero inputChar)
+				(inc 'inputLine)
+				c))))
+
+(de skipws ()
+  (while (whitespace? (peek))
+    (getChar)))
+
+(de expected (s)
+  (prinl "Error at " inputChar ": " s " expected")
+  (bye))
+
+(de match? (c)
+  (if (= (peek) c)
+    (getChar)
+    (expected c))
+  (skipws))

@@ -1,0 +1,44 @@
+comments are //
+
+letter = "A" | "B" | ... | "Z" | "a" | "b" | ... | "z".
+digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9".
+hexDigit = digit | "A" | "B" | "C" | "D" | "E" | "F".
+number = digit {digit} ["." {digit}]| "0" {"0"} "x" hexDigit {hexDigit}.
+ident = letter {letter | digit}.
+string = """ {character} """.
+
+block ::= "{" {exp} "}"
+exp ::=     
+	function |    
+  set varlist `=´ explist block |  
+  while exp block |  
+  if exp block else block | 
+  for exp `,´ exp `,´ exp block | 
+  foreach namelist in explist block |
+	match exp to matchcases |
+	expr0
+varlist ::= var {`,´ var}
+var ::=  ident [postfix]
+postfix ::= ("." index | funcall) {postfix}
+index ::= ident | '(' exp ')'
+namelist ::= ident {`,´ ident}
+explist ::= exp {"," exp}
+funcall ::= '(' explist ')' 
+function ::= "f" `(´ [namelist] `)´ block
+list ::= "[" [explist] "]"
+literal ::= 'false' | 'true' | number | string | exp
+expr0 ::= expr1 binop0 expr1
+binop0 ::= '<&' | '&>' | '+@'
+expr1 ::= expr2 binop1 expr2
+binop1 ::= `<´ | `<=´ | `>´ | `>=´ | `==´ | `!=´
+expr2 ::= expr3 binop2 expr3
+binop2 ::= '+' | '-' | '+.' | '-.' | 'or' | '|' | '^'
+expr3 ::= unexpr binop3 unexpr
+binop3 ::= `*´ | `/´ | `%´ | '*.' | '/.' | 'and' | '&'
+unexpr ::= unop literal | literal
+unop ::= '+' | '-' | 'not'
+
+    Modules
+module = MODULE ident ";" [ImportList] DeclarationSequence
+    [BEGIN StatementSequence] END ident "." .
+ImportList = IMPORT import {"," import} ";".
